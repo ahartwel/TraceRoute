@@ -1,0 +1,65 @@
+var express = require('express');
+var fs = require('fs');
+var request = require('request');
+var cheerio = require('cheerio');
+var app     = express();
+var httpsync = require('httpsync');
+var traceroute = require('traceroute');
+
+    
+app.get('/route/:endPoint', function(req, res){
+	var endPoint = req.params.endPoint;
+    
+    
+         traceroute.trace(endPoint, function (err,hops) {
+  if (!err) {
+      console.log(hops);
+        
+      
+      var data =  {};
+      
+       var  apiKey = "1801720c83c41434c7c038029a88e120283d70cd1b90d451070ff195cafeadfc";
+                   for (var i = 0; i<hops.length; i++) {
+                     //  console.log(hops[i]);
+                       //console.log(Object.getOwnPropertyNames(hops));
+                    if (hops[i]!=false) {
+                      data[i] = {};
+                       
+                     //  console.log(Object.getOwnPropertyNames(hops[i]));
+                    var ip = Object.getOwnPropertyNames(hops[i])[0];
+                       data[i].ip = ip;
+                       data[i].time = hops[i][ip][0];
+                       console.log("sdf " + hops[i][0]);
+                      
+                       var url = 'http://api.ipinfodb.com/v3/ip-city/?key=' + apiKey + "&ip=" + ip;
+                    
+                var re = httpsync.get({ url : url});
+                    var re = re.end();
+                    console.log("shiiiit");
+                    // console.log(re.data.toString().split(";"));
+                       var returned = re.data.toString().split(";");
+                    data[i].country = returned[4];
+                    data[i].state = returned[5];
+                    data[i].city = returned[6];
+                    data[i].zip = returned[7];
+                    data[i].lat = returned[8];
+                    data[i].lon = returned[9];
+                        console.log(data[i]);
+                   }
+                   }
+      
+  }
+             
+              res.json(data);
+  });
+   
+        
+	})
+
+
+
+
+
+app.listen('8081')
+console.log('Magic happens on port 8081');
+exports = module.exports = app; 	
