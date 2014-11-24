@@ -5,7 +5,18 @@ var cheerio = require('cheerio');
 var app     = express();
 var httpsync = require('httpsync');
 var traceroute = require('traceroute');
-
+app.get('/myspace', function(req, res){
+      traceroute.trace("http://myspace.com", function (err,hops) {
+  if (!err) {
+      console.log(hops);
+        
+  } else {
+   console.log(err);   
+  }
+      });
+    
+    
+});
     
 app.get('/route/:endPoint', function(req, res){
 	var endPoint = req.params.endPoint;
