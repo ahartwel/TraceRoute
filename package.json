@@ -10,6 +10,7 @@
     "httpsync": "latest",
     "request": "latest",
     "wait.for": "^0.6.6",
-      "traceroute": "latest"
+      "traceroute": "latest",
+      "traceroute-wrapper": "latest"
   }
 }
