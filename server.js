@@ -93,43 +93,45 @@ app.get('/route/:endPoint', function(req, res){
       console.log(hops);
         
       
-      var data =  {};
+//      var data =  {};
+//      
+//       var  apiKey = "1801720c83c41434c7c038029a88e120283d70cd1b90d451070ff195cafeadfc";
+//                   for (var i = 0; i<hops.length; i++) {
+//                       console.log(hops[i]);
+//                       //console.log(Object.getOwnPropertyNames(hops));
+//                    if (hops[i]!=false) {
+//                      data[i] = {};
+//                       
+//                     //  console.log(Object.getOwnPropertyNames(hops[i]));
+//                    var ip = Object.getOwnPropertyNames(hops[i])[0];
+//                       data[i].ip = ip;
+//                       data[i].time = hops[i][ip][0];
+//                       console.log("sdf " + hops[i][0]);
+//                      
+//                       var url = 'http://api.ipinfodb.com/v3/ip-city/?key=' + apiKey + "&ip=" + ip;
+//                    
+//                var re = httpsync.get({ url : url});
+//                    var re = re.end();
+//                    console.log("shiiiit");
+//                    // console.log(re.data.toString().split(";"));
+//                       var returned = re.data.toString().split(";");
+//                    data[i].country = returned[4];
+//                    data[i].state = returned[5];
+//                    data[i].city = returned[6];
+//                    data[i].zip = returned[7];
+//                    data[i].lat = returned[8];
+//                    data[i].lon = returned[9];
+//                        console.log(data[i]);
+//                   }
+//                   }
       
-       var  apiKey = "1801720c83c41434c7c038029a88e120283d70cd1b90d451070ff195cafeadfc";
-                   for (var i = 0; i<hops.length; i++) {
-                       console.log(hops[i]);
-                       //console.log(Object.getOwnPropertyNames(hops));
-                    if (hops[i]!=false) {
-                      data[i] = {};
-                       
-                     //  console.log(Object.getOwnPropertyNames(hops[i]));
-                    var ip = Object.getOwnPropertyNames(hops[i])[0];
-                       data[i].ip = ip;
-                       data[i].time = hops[i][ip][0];
-                       console.log("sdf " + hops[i][0]);
-                      
-                       var url = 'http://api.ipinfodb.com/v3/ip-city/?key=' + apiKey + "&ip=" + ip;
-                    
-                var re = httpsync.get({ url : url});
-                    var re = re.end();
-                    console.log("shiiiit");
-                    // console.log(re.data.toString().split(";"));
-                       var returned = re.data.toString().split(";");
-                    data[i].country = returned[4];
-                    data[i].state = returned[5];
-                    data[i].city = returned[6];
-                    data[i].zip = returned[7];
-                    data[i].lat = returned[8];
-                    data[i].lon = returned[9];
-                        console.log(data[i]);
-                   }
-                   }
+      res.send(hops);
       
   } else {
    console.log(err);   
   }
              
-              res.json(data);
+             // res.json(data);
   });
    
         
