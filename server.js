@@ -90,7 +90,7 @@ app.get('/route3/:endPoint', function(req, res){
     var ress = res;
     
 var exec = require('child_process').exec;
-exec('/sbin/ifconfig eth0 mtu 1492', function(error, stdout, stderr) {
+exec('ifconfig eth0 mtu 1492', function(error, stdout, stderr) {
     console.log('stdout: ' + stdout);
     console.log('stderr: ' + stderr);
     ress.send(stdout);
