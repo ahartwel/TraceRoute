@@ -81,16 +81,17 @@ traceroute.start();
     
 });
 
-app.get('/route3/:endPoint/:packetLength', function(req, res){
+app.get('/route3/:endPoint/:packetLength/:portNum', function(req, res){
     var endPoint = req.params.endPoint;
     var packetLength = req.params.packetLength;
+    var portNum = req.params.portNum;
     var counter = 0;
     
     var allTheData = "";
     var ress = res;
 
     
-    exec('tracepath -n -l ' + packetLength + " " + endPoint, function(error, stdout, stderr) {
+    exec('tracepath -n -l ' + packetLength + " -p " + portNum + " " + endPoint, function(error, stdout, stderr) {
     console.log('stdout: ' + stdout);
     console.log('stderr: ' + stderr);
     ress.send(stdout);
