@@ -90,7 +90,7 @@ app.get('/route3/:endPoint', function(req, res){
     var ress = res;
 
     
-    exec('tracepath -n -l 600 ' + endPoint, function(error, stdout, stderr) {
+    exec('tracepath -n -l 128000 ' + endPoint, function(error, stdout, stderr) {
     console.log('stdout: ' + stdout);
     console.log('stderr: ' + stderr);
     ress.send(stdout);
