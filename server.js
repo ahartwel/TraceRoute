@@ -88,7 +88,7 @@ app.get('/route3/:endPoint', function(req, res){
     var child = exec('tracepath ' + endPoint);
 child.stdout.on('data', function(data) {
     console.log('stdout: ' + data);
-    res.send(stdout);
+    res.send(data);
 });
 child.stderr.on('data', function(data) {
     console.log('stdout: ' + data);
