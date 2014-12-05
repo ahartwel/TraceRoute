@@ -87,13 +87,13 @@ app.get('/route3/:endPoint', function(req, res){
     var counter = 0;
     
     var allTheData = "";
+    var ress = res;
     
-    var child = exec('tracepath -n ' + endPoint);
 var exec = require('child_process').exec;
 exec('tracepath -n ' + endPoint, function(error, stdout, stderr) {
     console.log('stdout: ' + stdout);
     console.log('stderr: ' + stderr);
-    res.send(stdout);
+    ress.send(stdout);
     if (error !== null) {
         console.log('exec error: ' + error);
     }
