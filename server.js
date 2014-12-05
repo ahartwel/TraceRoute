@@ -83,7 +83,21 @@ traceroute.start();
 
 app.get('/route3/:endPoint', function(req, res){
     var endPoint = req.params.endPoint;
-    exec('tracepath ' + endPoint, function (error, stdout, stderr) {
+    exec('tracepath6 ' + endPoint, function (error, stdout, stderr) {
+  // output is in stdout
+        
+        console.log(error);
+        console.log(stdout);
+        res.send(stdout);
+        
+});
+
+});
+
+
+app.get('/route4/:endPoint', function(req, res){
+    var endPoint = req.params.endPoint;
+    exec('traceroute ' + endPoint, function (error, stdout, stderr) {
   // output is in stdout
         
         console.log(error);
