@@ -83,7 +83,7 @@ traceroute.start();
 
 app.get('/route3/:endPoint', function(req, res){
     var endPoint = req.params.endPoint;
-    exec('tracepath -n' + endPoint, function (error, stdout, stderr) {
+    exec('tracepath -n ' + endPoint, function (error, stdout, stderr) {
   // output is in stdout
         
         console.log(error);
