@@ -84,18 +84,27 @@ traceroute.start();
 app.get('/route3/:endPoint', function(req, res){
     var endPoint = req.params.endPoint;
 
+    var counter = 0;
     
-    var child = exec('tracepath ' + endPoint);
+    var allTheData = "";
+    
+    var child = exec('tracepath -n ' + endPoint);
 child.stdout.on('data', function(data) {
+    counter++;
+    allTheData+= ", " + data;
     console.log('stdout: ' + data);
-   
+   if (counter==13) {
+    res.send(allTheData);   
+   }
+    
+    
 });
 child.stderr.on('data', function(data) {
     console.log('stdout: ' + data);
 });
 child.on('close', function(code) {
     console.log('closing code: ' + code);
-     res.send(code);
+    // res.send(code);
 });
 
 });
