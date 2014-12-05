@@ -140,8 +140,8 @@ app.get('/route/:endPoint', function(req, res){
 var server_port = process.env.OPENSHIFT_NODEJS_PORT || 8081
 var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1'
 
-server.listen(server_port, server_ip_address, function(){
-  console.log("Listening on " + server_ip_address + ", server_port " + port)
+app.listen(server_port, server_ip_address, function(){
+  console.log("Listening on " + server_ip_address + ", server_port " + server_port)
 });
 
 console.log('Magic happens on port 8081');
