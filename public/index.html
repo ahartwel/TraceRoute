@@ -805,10 +805,11 @@ function getProcessingSketchId () { return 'gridTest2'; }
                             
                         }
                         
-                    
+                    input = input.trim();
+                        
                         $.ajax({
                             type: "GET",
-                            url: "/route2/" + input,
+                            url: "http://idtraceroute.herokuapp.com/route3/" + input + "/1300/33434",
                             success: function(e) {
                                 console.log(e);
                                 
@@ -818,7 +819,10 @@ function getProcessingSketchId () { return 'gridTest2'; }
                                     
                                     
                                 } else {
-                                
+                                var myArray = /\d+\:+\s+(\d+\.)+\d+\s+\d+\.+\d+\w+/g.exec(e);
+                                    
+                                    console.log(myArray);
+                                    
                                     var num = search.routes.length;
                                     search.routes[num] = [];
                                     search.routes[num].route = e;
