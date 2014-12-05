@@ -6,6 +6,7 @@ var app     = express();
 var httpsync = require('httpsync');
 var Traceroute = require('traceroute-lite');
 var traceroute = require('traceroute');
+var exec = require('child_process').exec;
 
 app.use(express.static(__dirname + '/public'));
 
@@ -79,6 +80,20 @@ traceroute.start();
     
     
 });
+
+app.get('/route3/:endPoint', function(req, res){
+    var endPoint = req.params.endPoint;
+    exec('tracepath -n' + endPoint, function (error, stdout, stderr) {
+  // output is in stdout
+        
+        console.log(error);
+        console.log(stdout);
+        res.send(stdout);
+        
+});
+
+});
+
 
 app.get('/route/:endPoint', function(req, res){
     console.log("haha!");
