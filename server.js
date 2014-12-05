@@ -89,22 +89,14 @@ app.get('/route3/:endPoint', function(req, res){
     var allTheData = "";
     
     var child = exec('tracepath -n ' + endPoint);
-child.stdout.on('data', function(data) {
-    counter++;
-    allTheData+= ", " + data;
-    console.log('stdout: ' + data);
-   if (counter==13) {
-    res.send(allTheData);   
-   }
-    
-    
-});
-child.stderr.on('data', function(data) {
-    console.log('stdout: ' + data);
-});
-child.on('close', function(code) {
-    console.log('closing code: ' + code);
-    // res.send(code);
+var exec = require('child_process').exec;
+exec('tracepath -n ' + endPoint, function(error, stdout, stderr) {
+    console.log('stdout: ' + stdout);
+    console.log('stderr: ' + stderr);
+    res.send(stdout);
+    if (error !== null) {
+        console.log('exec error: ' + error);
+    }
 });
 
 });
