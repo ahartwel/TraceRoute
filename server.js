@@ -5,6 +5,7 @@ var cheerio = require('cheerio');
 var app     = express();
 var httpsync = require('httpsync');
 var Traceroute = require('traceroute-lite');
+var traceroute = require('traceroute');
 
 app.use(express.static(__dirname + '/public'));
 
