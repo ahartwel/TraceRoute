@@ -294,7 +294,7 @@ height: 15px!important;
 margin-top: 0px!important;
 position: absolute;
 transform-origin: center;
-transform: rotate(45deg);
+transform: rotate(45deg)!important;
 }
 
 span.listItem {
@@ -309,6 +309,7 @@ float: left;
 margin-left: 0px;
 border-radius: 16px;
 margin-right: 20px;
+    transition: all .4s;
 }
             
            div#progressBar {
@@ -736,6 +737,15 @@ function getProcessingSketchId () { return 'gridTest2'; }
                 this.open = false;
                 
                 
+                this.colors = [];
+                
+                this.colorCount = 0;
+                
+                this.colors[0] = "rgb(218,39,69)";
+                this.colors[1] = "rgb(135,142,246)";
+                this.colors[2] = "rgb(101,189,81)";
+                this.colors[3] = "rgb(240,96,0)";
+                this.colors[4] = "rgb(255,255,255)";
                 
                 this.routes = [];
                 
@@ -778,6 +788,77 @@ function getProcessingSketchId () { return 'gridTest2'; }
                 
                 
                
+                this.colorCycle = function() {
+                    this.colorCount++;
+                    if (this.colorCount>4) {
+                     this.colorCount = 0;   
+                    }
+                    
+                    
+                }
+                
+                
+                
+                this.addSite = function(input, num, routeArray) {
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                     this.routes[num] = [];
+                     this.routes[num].route = routeArray;
+                     this.routes[num].color = this.colors[this.colorCount];
+                      this.routes[num].open = true
+                     this.colorCycle();
+                    
+                    addLi(input, num);
+                     
+                    
+                }
+                
+                
+                this.deleteRoute = function(num) {
+                 
+                    var listItems = document.getElementById("list").childNodes[1].getElementsByTagName("li");
+                    
+                    for (var i = 0; i<listItems.length; i++) {
+                        
+                     if (listItems[i].childNodes[0].getAttribute("num")==num) {
+                      listItems[i].parentNode.removeChild(listItems[i]);   
+                         
+                     }
+                        
+                    }
+                    
+                    search.routes[num] = "dead";
+                    
+                    
+                    
+                    
+                }
+                
+               
+                this.toggleVisible = function(num, ele) {
+                    
+                   
+                if (search.routes[num].open) {
+                    search.routes[num].open = false;
+                    ele.style.height = "6px";
+                    ele.style.marginTop = "5px";
+                    ele.style.borderRadius = "0px";
+                    
+                } else {
+                   search.routes[num].open = true;
+                    ele.style.height = ""; 
+                    ele.style.marginTop = ""; 
+                    ele.style.borderRadius = "";
+                }   
+                    
+                }
                 
                 
                 
@@ -813,34 +894,98 @@ function getProcessingSketchId () { return 'gridTest2'; }
                             success: function(e) {
                                 console.log(e);
                                 
-                                if (e=="error") {
+                                if (e=="error" || e=="") {
                                     
                                     search.error();
                                     
                                     
                                 } else {
-                                var myArray = /\d+\:+\s+(\d+\.)+\d+\s+\d+\.+\d+\w+/g.exec(e);
+                            
+                                  var newArray = e.match(/\d+\:+\s+(\d+\.)+\d+\s+\d+\.+\d+\w+/g);
+                                  
+                                 //   console.log(newArray);
+                                
+                                    var routeArray = {};
                                     
-                                    console.log(myArray);
+                                    for (var i = 0; i<newArray.length; i++) {
+                                        
+                                        routeArray[i] = {};
+                                        newArray[i] =newArray[i].replace(/\s+/g, ' ');
+     
+                                        newArray[i] =newArray[i].replace(/\:/g, '');
+                                        var hopSplit = newArray[i].split(" ");
+                                       // console.log(hopSplit);
+                                        routeArray[i].number = hopSplit[0];
+                                        routeArray[i].ip = hopSplit[1];
+                                        routeArray[i].time = hopSplit[2].replace(/\m+s/g,"");
+                                        
+                                    }
+                                   
+                                  //  console.log(routeArray);
+                                  //  console.log(JSON.stringify(routeArray));
                                     
-                                    var num = search.routes.length;
-                                    search.routes[num] = [];
-                                    search.routes[num].route = e;
+                                      search.progressBar.css("transition","all .5s");
+                                search.progressBar.css("width","50%");
+//                                    search.routes[num] = [];
+//                                    search.routes[num].route = routeArray;
+//                                    search.routes[num].color = search.colors[search.colorCount];
+//                                    search.colorCycle();
                                     
                                     
-                                $("form#search  input").val("");
-                                addLi(input, num);
-                                search.suspendSubmission=false;
+                                     $.ajax({
+                            type: "POST",
+                            url: "/toGeolocation",
+                            contentType: "application/json;charset=UTF-8",
+                            data: JSON.stringify(routeArray),
+                            async: true,
+                            success: function(e) {
+                                 $("form#search  input").val("");
+                                
+                                  search.suspendSubmission=false;
                                 search.loading = false;
                                 search.progress=0;
-                                search.progressBar.css("transition","all .5s");
+                                 search.progressBar.css("transition","all .5s");
                                 search.progressBar.css("width","100%");
                                 
-                                setTimeout(function() {
+                                var routeArray = e;
+                                
+                                var num = -1;
+                                
+                                for (var p = 0; p<search.routes.length; p++) {
+                                 if (search.routes[p]=="dead") {
+                                     console.log(search.routes[p]);
+                                  num=p;   
+                                 }
+                                    
+                                }
+                                
+                                if (num==-1) {
+                                num = search.routes.length;
+                                }
+                                    
+                                search.addSite(input, num, routeArray);
+                                
+                                  setTimeout(function() {
                                 
                                     search.progressBar.removeAttr("style");
                                     
                                 },1400);
+                                
+                            }, error: function(e) {
+                                
+                                console.log(e);  
+                            search.error();
+                                
+                                
+                            }});  //end of Post request
+                                    
+                                    
+                               
+                                //addLi(input, num);
+                              
+                    
+                                
+                              
                                     
                                 }
                                 
@@ -881,12 +1026,15 @@ function getProcessingSketchId () { return 'gridTest2'; }
         function addLi(site, num) {
             
             var li = document.createElement('li');
-            
             var img = document.createElement('img');
             img.src="add.svg";
+            img.className = "deleteRoute";
+            img.setAttribute("num", num);
             
             var swi = document.createElement('div');
             swi.className = "visibleSwitch";
+            swi.style.backgroundColor = search.colors[search.colorCount];
+            swi.setAttribute("num", num);
             
             var span = document.createElement('span');
             span.className = "listItem";
@@ -901,6 +1049,27 @@ function getProcessingSketchId () { return 'gridTest2'; }
             search.routes[num].ele = li;
             
             list.appendChild(li);
+            
+            
+            
+            img.addEventListener('click', function(e) {
+               console.log(e);
+                var num = e.toElement.getAttribute("num");
+                
+                search.deleteRoute(num);
+                
+                
+            });
+            
+            swi.addEventListener('click', function(e) {
+                console.log(e);
+                var num = e.toElement.getAttribute("num");
+                
+                search.toggleVisible(num,e.toElement);
+                
+                
+            });
+            
             
             // <li><img src="add.svg"></img><div class="visibleSwitch"></div><span class="listItem">www.facebook.com</span></li>
             

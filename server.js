@@ -3,13 +3,14 @@ var fs = require('fs');
 var request = require('request');
 var cheerio = require('cheerio');
 var app     = express();
+
 var httpsync = require('httpsync');
 var Traceroute = require('traceroute-lite');
 var traceroute = require('traceroute');
 var exec = require('child_process').exec;
-
+var bodyParser = require('body-parser')
 app.use(express.static(__dirname + '/public'));
-
+app.use(bodyParser.json());
 app.use(function (req, res, next) {
 
     // Website you wish to allow to connect
@@ -117,10 +118,13 @@ app.get('/route3/:endPoint/:packetLength/:portNum', function(req, res){
     exec('tracepath -n -l ' + packetLength + " -p " + portNum + " " + endPoint, function(error, stdout, stderr) {
     console.log('stdout: ' + stdout);
     console.log('stderr: ' + stderr);
-    ress.send(stdout);
+   
     if (error !== null) {
         console.log('exec error: ' + error);
-        ress.send(error);
+        ress.send("error");
+    } else {
+         ress.send(stdout);     
+        
     }
 });
 
@@ -198,7 +202,58 @@ app.get('/route/:endPoint', function(req, res){
         
 	})
 
+app.post('/toGeolocation', function(req, res){
+    
+    var data =  {};
+    
+    console.log(req.body);
+    
+    var hops = req.body;
+    //hops = JSON.parse(hops);
+    console.log(hops["0"]);
+    console.log(hops[0]);
+    var ress = res;
+      
+       var  apiKey = "1801720c83c41434c7c038029a88e120283d70cd1b90d451070ff195cafeadfc";
+    
+                for (var i = 0; i<Object.keys(hops).length; i++) {
+                       console.log(hops[i]);
+                       //console.log(Object.getOwnPropertyNames(hops));
+                    if (hops[i]!=false) {
+                      data[i] = {};
+                       
+                     //  console.log(Object.getOwnPropertyNames(hops[i]));
+                    var ip = hops[i].ip;
+                       data[i].ip = ip;
+                       data[i].time = hops[i].time;
+                       console.log("sdf " + hops[i]);
+                      
+                       var url = 'http://api.ipinfodb.com/v3/ip-city/?key=' + apiKey + "&ip=" + ip;
+                    
+                var re = httpsync.get({ url : url});
+                    var re = re.end();
+                    console.log("shiiiit");
+                    // console.log(re.data.toString().split(";"));
+                       var returned = re.data.toString().split(";");
+                    data[i].country = returned[4];
+                    data[i].state = returned[5];
+                    data[i].city = returned[6];
+                    data[i].zip = returned[7];
+                    data[i].lat = returned[8];
+                    data[i].lon = returned[9];
+                        console.log(data[i]);
+                   
+                        
+                    }
+                    
+                   
+                    
+                   }
 
+    console.log(data);
+    res.send(data);
+    
+});
 
 
 var port = process.env.PORT || 8081;
