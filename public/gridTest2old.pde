@@ -7,17 +7,15 @@ ArrayList<block> blocks;
 ArrayList<data> theData;
 
 PImage img;
-SiteManager manager;
+
 int coloringCount = 0;
 
 float w = -170.1536;
 float s = -52.7787;
 float e = 176.4844;
-float n = 98.6278;
+float n = 73.6278;
 
-int numOfBlocks = 15;
-
-
+int numOfBlocks = 10;
 
 //int ww = window.innerWidth;
 //int hh = window.innerHeight;
@@ -37,8 +35,6 @@ void setup() {
   blocks = new ArrayList<block>();
   theData = new ArrayList<data>();
   
- manager = new SiteManager();
-  
   float x = 0;
   float y = 0;
   int iCount = 0;
@@ -54,12 +50,12 @@ void setup() {
     
     iCount++;
   }
-  println(iCount);
+  
  int blockCount = points.size();
  int xCount  = 0;
  int yCount = 0;
  int counter = 0;
- for (int i = 0; i< points.size()-1; i++) {
+ for (int i = 0; i< points.size(); i++) {
    
     int id = xCount + (yCount * numOfBlocks);
 //   println(id + " " + i + " " + xCount);
@@ -87,13 +83,11 @@ void setup() {
     points.get(i).positions.add(1);
 // 
     newX = xCount+1;
-    if (newX<numOfBlocks) {
+    if (newX<=numOfBlocks) {
      newid = i - (numOfBlocks); 
-     //if (points.get(newid)) {
     points.get(i).connections.add( points.get(newid) );
      points.get(i).distances.add(int(dist(points.get(newid).x,points.get(newid).y,points.get(i).x, points.get(i).y)));
      points.get(i).positions.add(2);
-    //  }
     }
    
        } 
@@ -103,32 +97,23 @@ void setup() {
     newX = xCount -  1;
     if (newX>=0) {
     newid = i + (numOfBlocks);
-    var newest = newid;
-    //if (points.get(newid)) {
     points.get(i).connections.add( points.get(newid) );
-   points.get(i).distances.add(int(dist(points.get(newest).x,points.get(newid).y,points.get(i).x, points.get(i).y)));
+   points.get(i).distances.add(int(dist(points.get(newid).x,points.get(newid).y,points.get(i).x, points.get(i).y)));
    points.get(i).positions.add(5);
-    //}
     }
     
     newX = xCount;
     newid =  i + (numOfBlocks+1); 
-    if (points.get(newid)) {
     points.get(i).connections.add( points.get(newid) );
    points.get(i).distances.add(int(dist(points.get(newid).x,points.get(newid).y,points.get(i).x, points.get(i).y)));
    points.get(i).positions.add(6);
-    }
  
     newX = xCount+1;
-    if (newX<numOfBlocks-1) {
+    if (newX<=numOfBlocks) {
     newid = i + (numOfBlocks+2); 
-   if (points.get(newid)) {
    points.get(i).connections.add( points.get(newid) );
-   console.log(points.get(newid) );
-   console.log(i);
    points.get(i).distances.add(int(dist(points.get(newid).x,points.get(newid).y,points.get(i).x, points.get(i).y)));
    points.get(i).positions.add(7);
-  }
     }
    
        } 
@@ -203,56 +188,223 @@ void setup() {
   
   
   
-
-  
-  
-//  int siteNum = manager.sites.size();
-//  manager.sites.add(new Site("facebook") );
-//  
-//  
-//  
-//  JSONObject file = loadJSONObject("data.json");
-//  for (int i = 0; i< file.size(); i++) {
-//    JSONObject folders = file.getJSONObject(str(i));
-//    //println(folders);
-//      float lat = folders.getFloat("lat");
-//      float lon = folders.getFloat("lon");
-//      float time = folders.getFloat("time");
-//      String country = folders.getString("country");
-//      String city = folders.getString("city");
-//      String state = folders.getString("state");
-//      String zip = folders.getString("zip");
-//      String ip = folders.getString("ip");
-//      manager.sites.get(siteNum).addData(lat, lon, time, country, city, state, zip, ip);  
-//  }
-//  
-//  
-//  
-//  
-//siteNum = manager.sites.size();
-//  manager.sites.add(new Site("netflix") );
-//  
-//  
-//  
-//JSONObject f = loadJSONObject("data2.json");
-//  for (int i = 0; i< file.size(); i++) {
-//    JSONObject folders = f.getJSONObject(str(i));
-//    //println(folders);
-//      float lat = folders.getFloat("lat");
-//      float lon = folders.getFloat("lon");
-//      float time = folders.getFloat("time");
-//      String country = folders.getString("country");
-//      String city = folders.getString("city");
-//      String state = folders.getString("state");
-//      String zip = folders.getString("zip");
-//      String ip = folders.getString("ip");
-//      manager.sites.get(1).addData(lat, lon, time, country, city, state, zip, ip);  
-//  }
-//  println(manager.sites);
   
   
   
-
+  
+  
+  /*
+  
+  JSONObject file = loadJSONObject("output.json");
+ //for (int f = 0; f< file.size(); f++) {
+  JSONObject folders = file.getJSONObject("3");
+ 
+  JSONObject data = folders.getJSONObject("data");
+  
+  for (int d = 0; d<data.size();d++) {
+  JSONObject sites = data.getJSONObject(str(d));
+  
+  //println(sites.size());
+  ArrayList<Float> la = new ArrayList<Float>();
+    ArrayList<Float> lo = new ArrayList<Float>();
+      ArrayList<String> t = new ArrayList<String>();
+  for (int i = 2; i<sites.size(); i++) {
+    JSONObject site = sites.getJSONObject(str(i));
+   // println(i);
+    //println(site);
+    if (site.hasKey("long") && site.hasKey("time") && site.hasKey("ip")) {
+      //println(site.getString("long"));
+    String name = site.getString("name");
+    //String address = site.getString("city") + " " + site.getString("state") + " " + site.getString("country");
+    String address = "AsdasD";
+    float lat = site.getFloat("lat");
+    float lon = site.getFloat("long");
+    String time = site.getString("time");
+    la.add(lat);
+    lo.add(lon);
+    t.add(time);
+    //JSONArray ips = site.getJSONArray("ip");
+    //String ip = ips.getString(0);
+    String ip = "asf";
+    //points.add(new vert(lat, lon, i, address, ip, name));
+    
+    }
+    
+  }
+  
+  theData.add(new data(la, lo, t));
+  
+  
+  }
+  
+  
+  
+  
+  
+  
+  
+     folders = file.getJSONObject("37");
+ 
+    data = folders.getJSONObject("data");
+  
+  for (int d = 0; d<data.size();d++) {
+  JSONObject sites = data.getJSONObject(str(d));
+  
+  //println(sites.size());
+  ArrayList<Float> la = new ArrayList<Float>();
+    ArrayList<Float> lo = new ArrayList<Float>();
+      ArrayList<String> t = new ArrayList<String>();
+  for (int i = 2; i<sites.size(); i++) {
+    JSONObject site = sites.getJSONObject(str(i));
+   // println(i);
+    //println(site);
+    if (site.hasKey("long") && site.hasKey("time") && site.hasKey("ip")) {
+      //println(site.getString("long"));
+    String name = site.getString("name");
+    //String address = site.getString("city") + " " + site.getString("state") + " " + site.getString("country");
+    String address = "AsdasD";
+    float lat = site.getFloat("lat");
+    float lon = site.getFloat("long");
+    String time = site.getString("time");
+    la.add(lat);
+    lo.add(lon);
+    t.add(time);
+    //JSONArray ips = site.getJSONArray("ip");
+    //String ip = ips.getString(0);
+    String ip = "asf";
+    //points.add(new vert(lat, lon, i, address, ip, name));
+    
+    }
+    
+  }
+  
+  theData.add(new data(la, lo, t));
+  
+  
+  }
+  
+  
+  
+    folders = file.getJSONObject("32");
+ 
+    data = folders.getJSONObject("data");
+  
+  for (int d = 6; d<data.size();d++) {
+  JSONObject sites = data.getJSONObject(str(d));
+  
+  //println(sites.size());
+  ArrayList<Float> la = new ArrayList<Float>();
+    ArrayList<Float> lo = new ArrayList<Float>();
+      ArrayList<String> t = new ArrayList<String>();
+  for (int i = 2; i<sites.size(); i++) {
+    JSONObject site = sites.getJSONObject(str(i));
+   // println(i);
+    //println(site);
+    if (site.hasKey("long") && site.hasKey("time") && site.hasKey("ip")) {
+      //println(site.getString("long"));
+    String name = site.getString("name");
+    //String address = site.getString("city") + " " + site.getString("state") + " " + site.getString("country");
+    String address = "AsdasD";
+    float lat = site.getFloat("lat");
+    float lon = site.getFloat("long");
+    String time = site.getString("time");
+    la.add(lat);
+    lo.add(lon);
+    t.add(time);
+    //JSONArray ips = site.getJSONArray("ip");
+    //String ip = ips.getString(0);
+    String ip = "asf";
+    //points.add(new vert(lat, lon, i, address, ip, name));
+    
+    }
+    
+  }
+  
+  theData.add(new data(la, lo, t));
+  
+  
+  }
+  
+  
+  
+  
+  
+  folders = file.getJSONObject("8");
+ 
+    data = folders.getJSONObject("data");
+  
+  for (int d = 0; d<data.size();d++) {
+  JSONObject sites = data.getJSONObject(str(d));
+  
+  //println(sites.size());
+  ArrayList<Float> la = new ArrayList<Float>();
+    ArrayList<Float> lo = new ArrayList<Float>();
+      ArrayList<String> t = new ArrayList<String>();
+  for (int i = 2; i<sites.size(); i++) {
+    JSONObject site = sites.getJSONObject(str(i));
+   // println(i);
+    //println(site);
+    if (site.hasKey("long") && site.hasKey("time") && site.hasKey("ip")) {
+      //println(site.getString("long"));
+    String name = site.getString("name");
+    //String address = site.getString("city") + " " + site.getString("state") + " " + site.getString("country");
+    String address = "AsdasD";
+    float lat = site.getFloat("lat");
+    float lon = site.getFloat("long");
+    String time = site.getString("time", "100 ms");
+    la.add(lat);
+    lo.add(lon);
+    t.add(time);
+    //JSONArray ips = site.getJSONArray("ip");
+    //String ip = ips.getString(0);
+    String ip = "asf";
+    //points.add(new vert(lat, lon, i, address, ip, name));
+    
+    }
+    
+  }
+  if (la.size()<1) {
+  theData.add(new data(la, lo, t));
+  }
+  
+  }
+  
+  
+  
+  
+  
+ // println("ooogaaaabooooooooogggaaaaaaa " + theData.size());
+  theData.get(0).distortMap();
+//theData.get(1).distortMap();
+theData.get(3).distortMap();
+  theData.get(4).distortMap();
+  theData.get(5).distortMap();
+  theData.get(9).distortMap();
+  theData.get(18).distortMap();
+  theData.get(37).distortMap();
+  
+  
+  theData.get(47).distortMap();
+  
+  theData.get(72).distortMap();
+ // println(coloringCount + "      dsfasdfasdCOLORINGCOUNT");
+  */
+  
+  
+  
+  for (int i = 0; i<points.size(); i++) {
+   //s println(i);
+   if (random(0,1)<0.05) {
+      point pp = points.get(i);
+      for (int p = 0; p<pp.distances.size(); p++) {
+       // console.log("asd -- " + pp.distances.get(p));
+      //  pp.distances.set(p, pp.distances.get(p)*0.2); 
+        // console.log("asd -- " + pp.distances.get(p));
+      }
+      
+   } 
+    
+  }
   
 } 
 
@@ -265,7 +417,41 @@ void draw() {
   
 
   
+  for (int i =0 ; i<points.size(); i++) {
+    point pp = points.get(i);
+    pp.xForce = 0;
+    pp.yForce = 0;
+    }
+  
+  
+  for (int i =0 ; i<points.size(); i++) {
+   point pp = points.get(i);
+  // pp.showConnections();
+   //pp.stickToSpot();
+   pp.update();
+   pp.pull();
+   pp.push();
+   //pp.stickToSpot();
+   fill(pp.col);
 
+   //rect(pp.x,pp.y,5,5);
+  
+  }
+  
+   for (int i =0 ; i<points.size(); i++) {
+     point pp = points.get(i);
+     if (abs(pp.xForce)>1.3) {
+    pp.x+=pp.xForce;
+    
+     }
+     
+     if (abs(pp.yForce)>1) {
+            
+   pp.y += pp.yForce; 
+     }
+    
+    //println(pp.xForce); 
+   }
   
   
     for (int i =0 ; i<points.size(); i++) {
@@ -296,51 +482,6 @@ void draw() {
     
   }
   
-    for (int i =0 ; i<points.size(); i++) {
-    point pp = points.get(i);
-    pp.xForce = 0;
-    pp.yForce = 0;
-    }
-  
-  for (int i =0 ; i<points.size(); i++) {
-   point pp = points.get(i);
-  // pp.showConnections();
-   //pp.stickToSpot();
-  // pp.update();
-  // pp.pull();
-   //pp.push();
-   //pp.stickToSpot();
-   fill(pp.col);
-
-   //rect(pp.x,pp.y,5,5);
-  
-  }
-  
-  
-  manager.update();
-    
-  
-  
-  
-   for (int i =0 ; i<points.size()-1; i++) {
-     point pp = points.get(i);
-    
-    pp.x+=pp.xForce;
-    
-    
-     
-    
-            
-   pp.y += pp.yForce; 
-     
-    
-    //println(pp.xForce); 
-   }
-  
-  
-
-  
-  
 }
 
 
@@ -349,78 +490,10 @@ void draw() {
   // points.get(i).messUpDist(); 
   }
   
-  manager.removeIt("netflix");
-  
   saveFrame(); 
   
  }
-class SiteManager {
-  ArrayList<Site> sites;
-  
- int timer = 0;
- boolean backToSpot = false;
-     SiteManager() {
-      
-      sites = new ArrayList<Site>();
-      
-      
-      
-     } 
-     
-   
-  
-    void update() {
-     for (int i = 0; i<sites.size(); i++) {
-    println(i);
-   sites.get(i).displayPoints(); 
-    sites.get(i).applyDist();
-  }
- 
-     if (backToSpot) {
-      timer++;
-     println("BACK TO SPOT");
-     for (int i =0 ; i<points.size(); i++) {
-       point pp = points.get(i);
-     pp.stickToSpot();
-        } 
-       
-       if (timer>100) {
-        backToSpot = false;
-        timer=0;
-        
-         
-       }
-       
-     }
-  
-      
-      
-    }
-    
-    
-    
-    void removeIt(String site) {
-      for (int i = sites.size()-1; i>0; i--) {
-        if (sites.get(i).name==site) {
-          backToSpot = true;
-         sites.remove(i); 
-        }
-        
-      }
-      
-    }
-  
-}
-
-
-
-
-
-
 class data {
-  
-  
-  
   
   ArrayList<Float> lat,  lon;
   ArrayList<String> time;
@@ -443,8 +516,6 @@ class data {
    }
   
   
-  
-    
   
   
   
@@ -569,276 +640,6 @@ fill(255,255,255,0);
   
   
 }
-
-
-
-class Site {
-  
-    String name;
-    ArrayList<DataPoint> dataPoints;
-    
-  
-     Site(String n) {
-      
-      name = n;
-      dataPoints = new ArrayList<DataPoint>();
-      
-     }
-    
-    
-    void addData(float lat,float lon,float time,String country,String city,String state,String zip, String ip) {
-    
-       dataPoints.add( new DataPoint(lat, lon, time, country, city, state, zip, ip) );
-      
-       println(dataPoints.get(dataPoints.size()-1).lat);
-       println(dataPoints.get(dataPoints.size()-1).lon);
-       println(dataPoints.get(dataPoints.size()-1).country);
-        println(dataPoints.get(dataPoints.size()-1).ip);
-    }
-   
-   
-   
-   
-   void displayPoints() {
-    
-      for (int i = 0; i<dataPoints.size()-1; i++) {
-        
-        DataPoint p = dataPoints.get(i);
-        DataPoint pp = dataPoints.get(i);
-        boolean chosen = false;
-        if (p.hasData) {
-          int q = i+1;
-          while(chosen==false&&q<dataPoints.size()) {
-            if (dataPoints.get(q).hasData) {
-             pp = dataPoints.get(q); 
-            chosen=true;  
-          } else {
-              q++;
-            }
-            
-            
-          }
-          
-         if (chosen) {
-          
-           float x1, x2, y1, y2;
-           PVector pos = new PVector();
-           PVector pos2 = new PVector();
-           for (int s = 0; s<blocks.size();s++) {
-             block b = blocks.get(s);
-            
-             if ((p.lat-b.lat1)*(p.lat-b.lat2)<=0 && (p.lon-b.lon1)*(p.lon-b.lon2)<=0) {
-             println(s);
-              pos = b.getPosition(p.lat, p.lon);
-            // rect(b.poi[0].x, b.poi[0].y,10,10);
-            } 
-            
-            
-             if ((pp.lat-b.lat1)*(pp.lat-b.lat2)<=0 && (pp.lon-b.lon1)*(pp.lon-b.lon2)<=0) {
-             println(s);
-              pos2 = b.getPosition(pp.lat, pp.lon);
-           //  rect(b.poi[0].x, b.poi[0].y,10,10);
-            }
-             
-           }
-           
-        beginShape();
-        stroke(255,255,255);
-        strokeWeight(1);
-       line(pos.x, pos.y, pos2.x, pos2.y);
-        //line(p.gridPoint.x, p.gridPoint.y, pp.gridPoint.x, pp.gridPoint.y);
-        endShape();
-        
-         }
-        }
-        
-        
-      }
-    
-    
-    
-   } 
-   
-   
-   
-   void distortMap() {
-     
-     
-     
-     
-     
-     
-     
-   }
-   
-   
-   void applyDist() {
-    
-     for (int i = 0; i<dataPoints.size()-1;i++) {
-       
-       
-        DataPoint p = dataPoints.get(i);
-        DataPoint pp = dataPoints.get(i);
-        boolean chosen = false;
-        
-        float time = 0;
-        
-        if (p.hasData) {
-          int q = i+1;
-          while(chosen==false&&q<dataPoints.size()) {
-            if (dataPoints.get(q).hasData) {
-             pp = dataPoints.get(q); 
-//              println("lets get those grid points");
-//             println(pp.gridPoint);
-//             println(pp.gridPoint.y);
-//             println(pp.gridPoint.x);
-             time+=dataPoints.get(q).time;
-            chosen=true;  
-          } else {
-            time+=dataPoints.get(q).time;
-            q++;
-
-            }
-            
-            
-          }
-          
-          
-           float newDist = timeToDist(time);
-           float currentDist = dist(int(p.gridPoint.x),int(p.gridPoint.y), int(pp.gridPoint.x), int(pp.gridPoint.y));
-           
-           float distDiff = (currentDist - newDist)/2;
-          if (distDiff>15 && distDiff>-15) {
-//           println(distDiff + " distDigg");
-//             println(newDist + " newDist");
-//                  println(currentDist + " currentDist");
-          }
-         if (chosen && p!=pp && distDiff>.2*newDist && distDiff>-15) {
-          
-           color c = color(random(0,255),random(0,255),random(0,255));
-          
-           
-           
-              
-           float mX = (p.gridPoint.x + pp.gridPoint.x)/2;
-           float mY = (p.gridPoint.y + pp.gridPoint.y)/2;
-           
-           //println(currentDist);
-           for (int g = 0; g<points.size(); g++) {
-            point gg = points.get(g);
-             float gW = abs( gg.x - p.gridPoint.x);
-             float gH = abs(gg.y - p.gridPoint.y);
-             if ( (gg.x-p.gridPoint.x)*(gg.x-pp.gridPoint.x)<=0 && (gg.y-p.gridPoint.y)*(gg.y-pp.gridPoint.y)<=0) {
-               
-                 fill(255,255,255);
-                // rect(gg.x, gg.y,10,10);
-                // rect(lerp(gg.x, mX,1 - distDiff/currentDist), lerp(gg.y, mY,1 - distDiff/currentDist), 10,10);
-                  //text(p.gridPoint.y, gg.x+10, gg.y+15);
-                 
-                  
-                  float le = newDist/currentDist * .01;
-                 // println(le);
-                  float lerpTrack = 0;
-                  while (lerpTrack<le && currentDist>0) {
-                   gg.xForce += lerp(gg.x, mX, .002) - gg.x;
-                   gg.yForce += lerp(gg.y, mY, .002) - gg.y;
-                   ArrayList<String> dir = new ArrayList<String>();
-                   if (gg.x<mX) {
-                    dir.add("left"); 
-                   } else if (gg.x>mX) {
-                    dir.add("right"); 
-                   }
-                   
-                    if (gg.y<mY) {
-                    dir.add("up"); 
-                   } else if (gg.y>mY) {
-                    dir.add("down"); 
-                   }
-                   gg.pullDirection(dir);
-                  // gg.pull();
-                   lerpTrack+=.002;
-                  }
-              // gg.yForce = lerp(gg.y, mY, distDiff/currentDist * .2) - gg.y;
-               
-             } else {
-                ArrayList<String> dir = new ArrayList<String>();
-                   if (gg.x<mX) {
-                    dir.add("left"); 
-                   } else if (gg.x>mX) {
-                    dir.add("right"); 
-                   }
-                   
-                    if (gg.y<mY) {
-                    dir.add("up"); 
-                   } else if (gg.y>mY) {
-                    dir.add("down"); 
-                   }
-                   gg.pullDirection(dir);
-               //CREATE PULL UP EVENT CREATE PULL DOWN EVEN, CREATE PULL LEFT EVEN, AND CREATE PULL RIGHT EVENT
-               
-             }
-             
-           }
-           
-           
-          // p.gridPoint.x = lerp(p.gridPoint.x, pp.gridPoint.x,.5);
-           //p.gridPoint.y = lerp(p.gridPoint.y, pp.gridPoint.y,.5);
-              
-        
-         }
-        }
-       
-       
-       
-       
-       
-     }
-     
-     
-   }
-   
-   
-   
-  
-  
-}
-
-
-class DataPoint {
-  
-  float lat, lon, time;
-  String country, city, state, zip, ip;
-  point gridPoint;
-  
-  boolean hasData;
-  
-  DataPoint(float la, float lo, float t, String cou, String ci, String st, String z, String i) {
-    
-    lat = la;
-    lon = lo;
-    time = t;
-    country = cou;
-    city = ci;
-    state = st;
-    zip = z;
-    ip = i;
-  
-    hasData = true;
-    
-    if (country.length()<=1) {
-     hasData = false;
-    println("FALSE!"); 
-    }
-  
-    
-    gridPoint = getBlock(lat, lon);
-    println(gridPoint);
-    
-  }
-  
-  
-  
-}
 class point {
 
   float x, y, startX, startY, workX, workY, tempX, tempY;
@@ -884,8 +685,7 @@ class point {
 
 
   void showConnections() {
-    stroke(255, 255, 255, 100);
-    strokeWeight(1);
+    stroke(255, 255, 255);
     beginShape();
     for (int i = 0; i<connections.size (); i++) {
 
@@ -901,8 +701,8 @@ class point {
 
   void stickToSpot() {
     if (dist(x, y, workX, workY)>(.6*blockHeight)) {
-      x = lerp(x, workX, .008);
-      y = lerp(y, workY, .008);
+      x = lerp(x, workX, .003);
+      y = lerp(y, workY, .003);
     }
   }
 
@@ -966,74 +766,6 @@ class point {
   }
 
 
-
-
-    void pullDirection(ArrayList<String> directions) {
-      
-      boolean up = false;
-      boolean down = false;
-      boolean left = false;
-      boolean right = false;
-      
-      for (int i = 0; i<directions.size(); i++) {
-         String dir = directions.get(i);
-         if (dir=="up") {
-         up = true;
-         }
-         
-         if (dir=="down") {
-        
-        down = true;
-         }
-         
-        if (dir=="left") {
-          left = true;
-        }
-        
-        if (dir=="right") {
-          right = true;
-        }
-          
-           
-         }
-    
-      
-      
-      
-      for (int i = 0; i<connections.size(); i++) {
-      point pp = connections.get(i);
-      int conDist = int(dist(pp.x, pp.y, x, y));
-      if (conDist>distances.get(i)) {
-
-         if (positions.get(i)>=0) {
-          //pp.xForce += (pp.x-x) 10;
-          boolean doIt = false;
-          if (pp.x>x && right) {
-            doIt = true;
-          } else if (pp.x<x && left) {
-            doIt = true;
-          }
-          
-          if (pp.y<y && up) {
-           doIt = true; 
-          } else if (pp.y>y && down) {
-           doIt = true; 
-          }
-          if (doIt) {
-         float fAdd = lerp(pp.x, x, .0009) - pp.x;
-        pp.xForce+=fAdd;  
-        
-        fAdd = lerp(pp.y, y, .0009) - pp.y;
-        pp.yForce+=fAdd;  
-          }
-
-         } 
-      }
-    }
-      
-      
-      
-    }
 
   void pull() {
 
@@ -1179,20 +911,12 @@ class block {
   float w, h;
   color col;
   float centerX, centerY;
-    float lat1, lat2, lon1, lon2, x1, x2, y1, y2;
+
   block(point p1, point p2, point p3, point p4) {
     poi[0] = p1; 
     poi[1] = p2;
     poi[2] = p3;
     poi[3] = p4;
-    
-    lat1=poi[0].lat;
-    lat2 = poi[3].lat;
-    lon1=poi[0].lon;
-    lon2=poi[1].lon;
-    
-     println(lat1 + " " + lat2 + " " + lon1 + " " + lon2 + "  asdfasdfasdfasdfasdfasdfasdf");
-
 
     centerX = p1.x + ((p2.x-p1.x)/2);
     centerY = p1.y + ((p2.y-p1.y)/2);
@@ -1202,18 +926,6 @@ class block {
 
 
 
-        PVector getPosition(float lat, float lon) {
-          
-            float x = map(lon, lon1, lon2, poi[0].x, poi[1].x);
-            float y = map(lat, lat1, lat2, poi[0].y, poi[3].y);
-            PVector pos = new PVector();
-            pos.x = x;
-            pos.y = y;
-          
-            return pos;
-          
-        }
-    
 
 
   void display() {
@@ -1238,7 +950,7 @@ class block {
 
 float timeToDist(float t) {
   
-  return t/5 * (blockWidth);
+  return t/100 * (blockWidth);
   
 }
 
@@ -1275,7 +987,7 @@ point getBlock(float lat, float lon) {
   }
  
 
-    println(pp.y + "  returning block shit");
+
 
   return pp;
   
@@ -1307,18 +1019,3 @@ void reduceDistance(point p,  float amount) {
   
 }
 
-
-
- int addSite(String name) {
-     
-     manager.sites.add(new Site(name) );
-     return manager.sites.size()-1;
-    }
-    
-    
-    
-    void addSomeData(float lat,float lon,float time,String country,String city,String state,String zip,String ip, int i) {
-    
-    manager.sites.get(i).addData(lat, lon, time, country, city, state, zip, ip);
-    console.log(manager.sites.get(i));
-    }

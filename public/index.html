@@ -501,7 +501,7 @@ function getProcessingSketchId () { return 'gridTest2'; }
             
             
             var drag, search, tut;
-            
+             var pro;
             $(window).load(function() {
             $("#processingSketch").css("transform","scale(" + whichScale + "," + whichScale + ") translateX(-" + (((2048*whichScale) - window.innerWidth)/2) + "px)");
                 
@@ -525,9 +525,25 @@ function getProcessingSketchId () { return 'gridTest2'; }
                 
                 tut = new tutorial();
                 
+               getSketch();
+                
             });
             //var proc = Processing.getElementById('processingSketch');
         
+            
+            
+            function getSketch() {
+                
+                pro = Processing.getInstanceById("processingSketch");
+                if (!pro) {
+                 console.log("shit");
+                    setTimeout(function() {
+                        getSketch();
+                    },500);
+                    
+                } 
+                
+            };
             
             
             function resize() {
@@ -802,11 +818,18 @@ function getProcessingSketchId () { return 'gridTest2'; }
                 this.addSite = function(input, num, routeArray) {
                     
                     
+                     console.log("AddSite");
                     
+                    console.log(routeArray);
+                    console.log(routeArray.length);
+                        
+                    var whichSite = pro.addSite(input);
                     
-                    
-                    
-                    
+                    for (var i = 0; i<Object.size(routeArray); i++) {
+                     var stop = routeArray[i];   
+                      console.log(stop); pro.addSomeData(stop.lat,stop.lon,stop.time,stop.country,stop.city,stop.state,stop.zip,stop.ip, whichSite); 
+                        
+                    }
                     
                     
                      this.routes[num] = [];
@@ -963,6 +986,8 @@ function getProcessingSketchId () { return 'gridTest2'; }
                                 num = search.routes.length;
                                 }
                                     
+                                console.log(JSON.stringify(routeArray));
+                                
                                 search.addSite(input, num, routeArray);
                                 
                                   setTimeout(function() {
@@ -1106,6 +1131,15 @@ function getProcessingSketchId () { return 'gridTest2'; }
             var x = a + t * (b - a);
             return x;
         }
+            
+            
+            Object.size = function(obj) {
+    var size = 0, key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) size++;
+    }
+    return size;
+};
             
         </script>
 		
