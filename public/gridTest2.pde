@@ -1,4 +1,4 @@
-/* @pjs preload="blank.png"; */
+/* @pjs preload="blankNew.png"; */
 
 float blockWidth, blockHeight;
 
@@ -10,14 +10,20 @@ PImage img;
 SiteManager manager;
 int coloringCount = 0;
 
-float w = -170.1536;
-float s = -52.7787;
-float e = 176.4844;
-float n = 98.6278;
+float w = -149.2383;
+float s = -38.8288;
+float e = 155.0391;
+float n = 83.9604;
+
+//float w = -170.1536;
+//float s = -52.7787;
+//float e = 176.4844;
+//float n = 98.6278;
 
 int numOfBlocks = 15;
 
-
+color[] col;
+   int colorCount;             
 
 //int ww = window.innerWidth;
 //int hh = window.innerHeight;
@@ -28,7 +34,7 @@ void setup() {
  //size( 500,500,P3D ); 
   background(0,0,0);
   frameRate(10);
-  img = loadImage("blank.png");
+  img = loadImage("blankNew.png");
  // println(img.width);
   //size(window.innerWidth,window.innerHeight);
   blockWidth = width/numOfBlocks;
@@ -38,6 +44,20 @@ void setup() {
   theData = new ArrayList<data>();
   
  manager = new SiteManager();
+  
+  
+  
+  col = new color[5];
+  
+  colorCount = 1;
+
+               console.log(colorCount); 
+    col[0] = color(218,39,69);
+    col[1] = color(135,142,246);
+    col[2] = color(101,189,81);
+    col[3] = color(240,96,0);
+    col[4] = color(255,255,255);
+  
   
   float x = 0;
   float y = 0;
@@ -384,7 +404,7 @@ class SiteManager {
      pp.stickToSpot();
         } 
        
-       if (timer>100) {
+       if (timer>120) {
         backToSpot = false;
         timer=0;
         
@@ -400,7 +420,12 @@ class SiteManager {
     
     
     void removeIt(String site) {
-      for (int i = sites.size()-1; i>0; i--) {
+    console.log(site);
+    console.log(sites);
+      for (int i = sites.size()-1; i>=0; i--) {
+      console.log(i);
+       console.log(sites.get(i));
+       console.log(sites.get(i).name);
         if (sites.get(i).name==site) {
           backToSpot = true;
          sites.remove(i); 
@@ -409,6 +434,31 @@ class SiteManager {
       }
       
     }
+    
+    
+    
+    void hideIt(String site) {
+     console.log(site);
+    console.log(sites);
+      for (int i = sites.size()-1; i>=0; i--) {
+      console.log(i);
+       console.log(sites.get(i));
+       console.log(sites.get(i).name);
+        if (sites.get(i).name==site) {
+        
+          if (sites.get(i).hidden) {
+            sites.get(i).hidden=false;
+            } else {
+            sites.get(i).hidden=true;
+              backToSpot = true;
+            }
+        }
+        
+      }
+    
+    
+    }
+    
   
 }
 
@@ -577,19 +627,34 @@ class Site {
     String name;
     ArrayList<DataPoint> dataPoints;
     
-  
+    ArrayList<GumConnection> gums;
+    
+    boolean hidden;
+    color colour;
+    
      Site(String n) {
-      
+     gums = new ArrayList<GumConnection>();
+      hidden = false;
       name = n;
       dataPoints = new ArrayList<DataPoint>();
-      
+    console.log(colorCount);
+    console.log(col);
+    colour = col[colorCount];
+    
+    colorCount++;
+    
+    if (colorCount>4) {
+    colorCount=0;
+    }
+    
      }
     
     
     void addData(float lat,float lon,float time,String country,String city,String state,String zip, String ip) {
     
        dataPoints.add( new DataPoint(lat, lon, time, country, city, state, zip, ip) );
-      
+        gums.add(new GumConnection(new PVector(10,10), new PVector(100,100), 10, 10));
+        gums.get(gums.size()-1).col = color(200, 20, 10, 100);
        println(dataPoints.get(dataPoints.size()-1).lat);
        println(dataPoints.get(dataPoints.size()-1).lon);
        println(dataPoints.get(dataPoints.size()-1).country);
@@ -620,7 +685,7 @@ class Site {
           }
           
          if (chosen) {
-          
+          if (hidden==false) {
            float x1, x2, y1, y2;
            PVector pos = new PVector();
            PVector pos2 = new PVector();
@@ -643,12 +708,32 @@ class Site {
            }
            
         beginShape();
-        stroke(255,255,255);
-        strokeWeight(1);
+        stroke(colour);
+        fill(colour);
+        strokeWeight(2);
+        ellipse(pos.x, pos.y, 5,5);
+        ellipse(pos2.x, pos2.y, 5,5);
+        
+        p.realPos = pos;
+        pp.realPos = pos2;
+        
        line(pos.x, pos.y, pos2.x, pos2.y);
         //line(p.gridPoint.x, p.gridPoint.y, pp.gridPoint.x, pp.gridPoint.y);
-        endShape();
         
+        int gumX = pos.x;
+        int gumY = pos.y;
+      
+        
+        
+        endShape();
+        beginShape();
+        noStroke();
+        fill(0,0,0,50);
+        //strokeWeight(1);
+        ellipse(pos.x, pos.y, 5,5);
+        ellipse(pos2.x, pos2.y, 5,5);
+        endShape();
+        }
          }
         }
         
@@ -673,7 +758,7 @@ class Site {
    
    
    void applyDist() {
-    
+    if (hidden==false) {
      for (int i = 0; i<dataPoints.size()-1;i++) {
        
        
@@ -736,7 +821,7 @@ class Site {
                   //text(p.gridPoint.y, gg.x+10, gg.y+15);
                  
                   
-                  float le = newDist/currentDist * .01;
+                  float le = newDist/currentDist * .001;
                  // println(le);
                   float lerpTrack = 0;
                   while (lerpTrack<le && currentDist>0) {
@@ -796,7 +881,7 @@ class Site {
      
      
    }
-   
+   }
    
    
   
@@ -810,7 +895,11 @@ class DataPoint {
   String country, city, state, zip, ip;
   point gridPoint;
   
+  PVector realPos;
+  
   boolean hasData;
+  
+  
   
   DataPoint(float la, float lo, float t, String cou, String ci, String st, String z, String i) {
     
@@ -822,6 +911,9 @@ class DataPoint {
     state = st;
     zip = z;
     ip = i;
+  
+    realPos = new PVector();
+    
   
     hasData = true;
     
@@ -1206,6 +1298,13 @@ class block {
           
             float x = map(lon, lon1, lon2, poi[0].x, poi[1].x);
             float y = map(lat, lat1, lat2, poi[0].y, poi[3].y);
+            
+            float x2 = map(lon,  lon1,  lon2, poi[3].x, poi[2].x);
+            float y2 = map(lat,  lat1,  lat2, poi[1].y, poi[2].y);
+            
+            x= (x+x2)/2;
+            y= (y+y2)/2;
+            
             PVector pos = new PVector();
             pos.x = x;
             pos.y = y;
@@ -1238,7 +1337,7 @@ class block {
 
 float timeToDist(float t) {
   
-  return t/5 * (blockWidth);
+  return t/2 * (blockWidth);
   
 }
 
@@ -1322,3 +1421,310 @@ void reduceDistance(point p,  float amount) {
     manager.sites.get(i).addData(lat, lon, time, country, city, state, zip, ip);
     console.log(manager.sites.get(i));
     }
+    
+    
+    void removeSite(String site) {
+  
+ manager.removeIt(site); 
+  
+}
+
+  
+    void letsHide(String site) {
+  
+ manager.hideIt(site); 
+  
+}
+
+
+
+    SiteManager getSites(String site) {
+    
+      return manager;
+    
+    
+    
+    }
+
+
+
+
+class GumConnection {
+
+  /** The radius of the circles. */
+  float radiusSP;
+  float radiusEP;
+  float radius;
+
+  /**
+   * The maximum distance between two circles. Used to normalize the vertical distance of the anchor points to the
+   * direct line between both centers.
+   */
+  float maxDistance = 500;
+
+  /** The color of the connection. */
+  int col;
+
+  /** Start point. The center of the start circle. */
+  PVector sp;
+
+  /** End point. The center of the end circle. */
+  PVector ep;
+
+  /** 1st upper anchor point. */
+  PVector apTop1 = new PVector();
+  /** 2nd upper anchor point. */
+  PVector apTop2 = new PVector();
+  /** 1st lower anchor point. */
+  PVector apBot1 = new PVector();
+  /** 2nd lower anchor point. */
+  PVector apBot2 = new PVector();
+
+  /** Perpendicular point at the end circle upper outline. */
+  PVector epTop = new PVector();
+  /** Perpendicular point at the start circle upper outline. */
+  PVector spTop = new PVector();
+  /** Perpendicular point at the end circle lower outline. */
+  PVector epBot = new PVector();
+  /** Perpendicular point at the start circle lower outline. */
+  PVector spBot = new PVector();
+
+  boolean autoUpdate = true;
+
+  PVector apTop11;
+
+  PVector apTop12;
+
+  PVector apTopCenter;
+
+  PVector apTop21;
+
+  PVector apTop22;
+
+  PVector apBot11;
+
+  PVector apBot12;
+
+  PVector apBotCenter;
+
+  PVector apBot21;
+
+  PVector apBot22;
+
+
+  // Fractions to set anchor points (in parts of start to end points distance)
+  float fract1 = 1 / 7f;
+  float fract2 = 2 / 7f;
+  float center = 1 / 2f;
+  float fract3 = 1 - 2 / 7f;
+  float fract4 = 1 - 1 / 7f;
+
+  GumConnection(PVector sp, PVector ep, float radiusSP, float radiusEP) {
+    update(sp, ep, radiusSP, radiusEP);
+
+    // Set default color to half-transparent black
+    this.col = color(0, 50);
+  }
+
+  GumConnection(PVector sp, PVector ep) {
+    this(sp, ep, 10, 10);
+  }
+
+  void update(PVector sp, PVector ep, float radiusSP, float radiusEP) {
+    this.sp = sp;
+    this.ep = ep;
+    this.radiusSP = radiusSP;
+    this.radiusEP = radiusEP;
+    updateRadius();
+  }
+
+  void setRadiusSP(float radiusSP) {
+    this.radiusSP = radiusSP;
+    updateRadius();
+  }
+
+  void addRadiusSP(float radiusSPDiff) {
+    this.radiusSP += radiusSPDiff;
+    updateRadius();
+  }
+
+  void setRadiusEP(float radiusEP) {
+    this.radiusEP = radiusEP;
+    updateRadius();
+  }
+
+  void addRadiusEP(float radiusEPDiff) {
+    this.radiusEP += radiusEPDiff;
+    updateRadius();
+  }
+
+  void updateRadius() {
+    this.radius = (radiusSP + radiusEP) / 2;
+  }
+
+  void draw() {
+    if (autoUpdate) {
+      updateAnchorPoints();
+    }
+
+    noStroke();
+    fill(col);
+    beginShape();
+
+    // Start point top
+    vertex(spTop.x, spTop.y);
+    // Top Bezier curves from start to end
+    bezierVertex(apTop11.x, apTop11.y, apTop12.x, apTop12.y, apTopCenter.x, apTopCenter.y);
+    bezierVertex(apTop21.x, apTop21.y, apTop22.x, apTop22.y, epTop.x, epTop.y);
+    // End circle (from end top to end bottom)
+    drawCircleVertices(ep, sp, radiusEP);
+
+    // End point bottom
+    vertex(epBot.x, epBot.y);
+    // Bottom Bezier curves from end to start
+    bezierVertex(apBot22.x, apBot22.y, apBot21.x, apBot21.y, apBotCenter.x, apBotCenter.y);
+    bezierVertex(apBot12.x, apBot12.y, apBot11.x, apBot11.y, spBot.x, spBot.y);
+    // Start circle (from start bottom to start top)
+    drawCircleVertices(sp, ep, radiusSP);
+
+    endShape();
+  }
+
+  void drawCircleVertices(PVector center, PVector center2, float radius) {
+    float angle = getAngleBetween(center2, center);
+    int circleVertexNr = 36;
+    for (int i = 0; i < circleVertexNr; i++) {
+      float theta = -angle + (PI / circleVertexNr * i);
+      float x = sin(theta) * radius;
+      float y = cos(theta) * radius;
+      vertex(center.x + x, center.y + y);
+    }
+  }
+
+  void drawDebug() {
+    // Show upper and lower perpendicular points
+    fill(0, 255, 0, 100);
+    ellipse(epTop.x, epTop.y, 10, 10);
+    ellipse(spTop.x, spTop.y, 10, 10);
+    fill(0, 255, 255, 100);
+    ellipse(epBot.x, epBot.y, 10, 10);
+    ellipse(spBot.x, spBot.y, 10, 10);
+
+    // Show anchor points
+    fill(255, 0, 0, 40);
+    ellipse(apTop11.x, apTop11.y, 5, 5);
+    ellipse(apTop12.x, apTop12.y, 5, 5);
+    fill(255, 0, 0, 100);
+    ellipse(apTopCenter.x, apTopCenter.y, 5, 5);
+    fill(255, 0, 0, 40);
+    ellipse(apTop21.x, apTop21.y, 5, 5);
+    ellipse(apTop22.x, apTop22.y, 5, 5);
+
+    noFill();
+  }
+
+  void updateFractions() {
+    float r = radiusSP + radiusEP;
+    center = radiusSP / r;
+
+    fract1 = center / 6 * 2;
+    fract2 = center / 6 * 3;
+
+    // center2 only needed for fract calculations
+    float c2 = radiusEP / r;
+    fract3 = 1 - c2 / 6 * 3;
+    fract4 = 1 - c2 / 6 * 2;
+  }
+
+  void updateAnchorPoints() {
+    PVector pv = getPerpendicular(sp, ep);
+    updatePerpendicularPoints(pv);
+
+    updateFractions();
+
+    // Top
+    // Calculate anchor points. Vertical distance depends on the horizontal distance.
+    float ydistTop = map(PVector.dist(spTop, epTop), 0, maxDistance, radius, 0);
+    // Limit vertical distance so even for distances > maxDistance no overlapping appears.
+    ydistTop = max(ydistTop, radius * 0.1f);
+    apTop11 = calcAnchorPoint(pv, radiusSP, fract1);
+    apTop12 = calcAnchorPoint(pv, ydistTop, fract2);
+    apTopCenter = calcAnchorPoint(pv, ydistTop, center);
+    apTop21 = calcAnchorPoint(pv, ydistTop, fract3);
+    apTop22 = calcAnchorPoint(pv, radiusEP, fract4);
+
+    // Bottom
+    float ydistBot = map(PVector.dist(spBot, epBot), 0, maxDistance, -radius, 0);
+    ydistBot = min(ydistBot, -radius * 0.1f);
+    apBot11 = calcAnchorPoint(pv, -radiusSP, fract1);
+    apBot12 = calcAnchorPoint(pv, ydistBot, fract2);
+    apBotCenter = calcAnchorPoint(pv, ydistBot, center);
+    apBot21 = calcAnchorPoint(pv, ydistBot, fract3);
+    apBot22 = calcAnchorPoint(pv, -radiusEP, fract4);
+  }
+
+  PVector calcAnchorPoint(PVector pv, float ydist, float fract) {
+    PVector ap = new PVector();
+    ap.x = lerp(sp.x + pv.x * ydist, ep.x + pv.x * ydist, fract);
+    ap.y = lerp(sp.y + pv.y * ydist, ep.y + pv.y * ydist, fract);
+    return ap;
+  }
+
+  // Calculate perpendicular points of both circles
+  void updatePerpendicularPoints(PVector pv) {
+    epTop.x = ep.x + pv.x * radiusEP;
+    epTop.y = ep.y + pv.y * radiusEP;
+    spTop.x = sp.x + pv.x * radiusSP;
+    spTop.y = sp.y + pv.y * radiusSP;
+
+    epBot.x = ep.x - pv.x * radiusEP;
+    epBot.y = ep.y - pv.y * radiusEP;
+    spBot.x = sp.x - pv.x * radiusSP;
+    spBot.y = sp.y - pv.y * radiusSP;
+  }
+
+  /**
+   * Returns the perpendicular vector to the line between the two given vectors.
+   * 
+   * @param sp
+   *            Start point.
+   * @param ep
+   *            End point.
+   * @return The perpendicular vector.
+   */
+  PVector getPerpendicular(PVector sp, PVector ep) {
+    float angle = getAngleBetween(sp, ep);
+    float theta = HALF_PI + angle;
+    float x = cos(theta);
+    float y = sin(theta);
+    return new PVector(x, y);
+  }
+
+  void setEndPoint(int x, int y) {
+    ep.x = x;
+    ep.y = y;
+  }
+
+  /**
+   * Calculates angle between two points, i.e. between the sum vector and the x-axis.
+   * 
+   * @param p1
+   *            The first point.
+   * @param p2
+   *            The second point.
+   * @return The angle between both points.
+   */
+  float getAngleBetween(PVector p1, PVector p2) {
+    // Note: Raw values between point 1 and point 2 not valid, as they are are origin-based.
+    PVector sub = PVector.sub(p2, p1);
+    PVector xaxis = new PVector(1, 0);
+    float angle = PVector.angleBetween(xaxis, sub);
+
+    if (p2.y < p1.y) {
+      angle = TWO_PI - angle;
+    }
+    return angle;
+  }
+}
+
+

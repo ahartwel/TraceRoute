@@ -409,6 +409,27 @@ left: 32%;
 }
          }
             
+            
+            .server {
+position: absolute;
+top: 0px;
+left: 0px;
+width: 100px;
+height: 200px;
+background-color: black;
+                text-align: center;
+}
+            
+            .server:hover {
+                
+             z-index: 25;   
+            }
+
+            .hideIt {
+                
+             display: none;   
+            }
+            
 		</style>
 		<!--[if lt IE 9]>
 			<script type="text/javascript">alert("Your browser does not support the canvas tag.");</script>
@@ -435,7 +456,8 @@ function getProcessingSketchId () { return 'gridTest2'; }
 				<noscript>
 					<p>JavaScript is required to view the contents of this page.</p>
 				</noscript>
-	    	
+	    	    
+	    	    <canvas id="dataPoints" width="100%" height="100%"></canvas>
 	    	
 	    	<div id="realContainer">
 	    	    <div class="error">
@@ -483,8 +505,8 @@ function getProcessingSketchId () { return 'gridTest2'; }
 		
 		<script>
             
-            var scaleX = window.innerWidth/2048;
-            var scaleY = window.innerHeight/1024;
+            var scaleX = window.innerWidth*1.4/2048;
+            var scaleY = window.innerHeight*1.4/1024;
             
             var whichScale;
             if (window.innerWidth> window.innerHeight *2) {
@@ -497,12 +519,23 @@ function getProcessingSketchId () { return 'gridTest2'; }
             whichScale = lerp(whichScale,1,.2);
             
             
-            
+            var canvas, context;
+            var server;
             
             
             var drag, search, tut;
              var pro;
             $(window).load(function() {
+                
+                
+                
+            canvas = document.getElementById("dataPoints");
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            context = canvas.getContext('2d');
+            
+                
+                
             $("#processingSketch").css("transform","scale(" + whichScale + "," + whichScale + ") translateX(-" + (((2048*whichScale) - window.innerWidth)/2) + "px)");
                 
                 drag = new setUpDragging(((2048 - window.innerWidth)/2), whichScale);
@@ -525,11 +558,99 @@ function getProcessingSketchId () { return 'gridTest2'; }
                 
                 tut = new tutorial();
                 
+                server = new ServerPoints();
+                
                getSketch();
                 
             });
             //var proc = Processing.getElementById('processingSketch');
         
+            
+            function animate() {
+                server.animation();
+                        
+                
+                requestAnimationFrame(animate);
+                
+            }
+            
+            function ServerPoints() {
+                
+                this.hasProcessing = false;
+                
+                
+                this.sites = [];
+                
+                this.points = [];
+                
+                this.getSites = function() {
+                    
+                 this.hasProcessing = true;   
+                    console.log(pro);
+                    console.log(this);
+                    setTimeout(function() {
+                    server.sites = pro.getSites().sites;
+                    animate();
+                    }, 800);
+                }
+                
+                
+                
+                this.animation = function() {
+                    var oldSize = this.sites.size();
+                  //  this.sites = pro.getSites().sites;
+                    //console.log(this.sites);
+//                    console.log(this.sites.size() + " -----");
+//                    console.log(oldSize);
+                    
+                   var sketch = [];
+                    sketch.x = $("#processingSketch").offset().left - 50;
+                    sketch.y = $("#processingSketch").offset().top - 200;
+                    sketch.h = $("#processingSketch").height() * drag.scale;
+                    sketch.w = $("#processingSketch").width() * drag.scale;
+                        for (var i = 0; i<this.sites.size(); i++) {
+                           // console.log(this.sites.get(i));
+                                  for (var p = 0; p<this.sites.get(i).dataPoints.size(); p++) {
+                                      var serv = this.sites.get(i).dataPoints.get(p);
+                                      if (this.sites.get(i).dataPoints.get(p).ele==undefined || this.sites.get(i).dataPoints.get(p).ele==null ) {
+                                      this.sites.get(i).dataPoints.get(p).ele = document.createElement("div");
+                                          var ele = this.sites.get(i).dataPoints.get(p).ele;
+                                       ele.className = "server";
+                                          if (this.sites.get(i).dataPoints.get(p).lat == "0") {
+                                           ele.className += " hideIt";   
+                                          }
+                                          
+                                          ele.innerHTML = this.sites.get(i).dataPoints.get(p).ip
+                                          document.body.appendChild(ele);
+                                          
+                                      } else {
+                                          
+                                          var xx = ((serv.realPos.x/2048) * sketch.w) + sketch.x;
+                                          var yy = ((serv.realPos.y/1024) * sketch.h) + sketch.y;
+                                          
+                                          if (serv.realPos.x!=0 && serv.realPos.y!=0) {
+                                            serv.ele.style.transform = "translate3d(" + xx + "px, " + yy + "px,0)";   
+                                              
+                                              
+                                          }
+                                      }
+                                      
+                                  }
+                            
+                            }        
+                        
+                 
+                    
+                    
+                   
+                    
+                    
+                }
+                
+                
+                
+                
+            }
             
             
             function getSketch() {
@@ -541,7 +662,9 @@ function getProcessingSketchId () { return 'gridTest2'; }
                         getSketch();
                     },500);
                     
-                } 
+                } else {
+                 server.getSites();   
+                }
                 
             };
             
@@ -851,7 +974,9 @@ function getProcessingSketchId () { return 'gridTest2'; }
                     for (var i = 0; i<listItems.length; i++) {
                         
                      if (listItems[i].childNodes[0].getAttribute("num")==num) {
-                      listItems[i].parentNode.removeChild(listItems[i]);   
+                          pro.removeSite(listItems[i].childNodes[2].innerHTML);
+                         listItems[i].parentNode.removeChild(listItems[i]); 
+                         
                          
                      }
                         
@@ -867,18 +992,47 @@ function getProcessingSketchId () { return 'gridTest2'; }
                
                 this.toggleVisible = function(num, ele) {
                     
-                   
+                   console.log(ele.parentNode.childNodes[2].innerHTML);
+                    pro.letsHide(ele.parentNode.childNodes[2].innerHTML);
                 if (search.routes[num].open) {
                     search.routes[num].open = false;
                     ele.style.height = "6px";
                     ele.style.marginTop = "5px";
                     ele.style.borderRadius = "0px";
                     
+                    for (var i = 0; i< server.sites.size(); i++) {
+                     
+                        if (server.sites.get(i).name == ele.parentNode.childNodes[2].innerHTML) {
+                         for (var p = 0; p<server.sites.get(i).dataPoints.size(); p++) {
+                             server.sites.get(i).dataPoints.get(p).ele.style.display = "none";
+                             
+                         }
+                            
+                        }
+                        
+                        
+                    }
+                    
+                    
                 } else {
                    search.routes[num].open = true;
                     ele.style.height = ""; 
                     ele.style.marginTop = ""; 
                     ele.style.borderRadius = "";
+                    
+                       for (var i = 0; i< server.sites.size(); i++) {
+                     
+                        if (server.sites.get(i).name == ele.parentNode.childNodes[2].innerHTML) {
+                         for (var p = 0; p<server.sites.get(i).dataPoints.size(); p++) {
+                             server.sites.get(i).dataPoints.get(p).ele.style.display = "";
+                             
+                         }
+                            
+                        }
+                        
+                        
+                    }
+                    
                 }   
                     
                 }
