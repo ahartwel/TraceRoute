@@ -118,6 +118,7 @@ margin-top: 9px;
 
 #search img:hover {
  transform-origin: center;
+ -webkit-transform-origin: center;
     transform: scale(1.05);
     cursor: pointer;
 }
@@ -129,7 +130,9 @@ height: 50%;
 width: 35px;
 left: 102.5%;
 transform: rotate(180deg);
+-webkit-transform: rotate(180deg);
 transform-origin: center center;
+-webkit-transform-origin: center center;
 }
 
 .toggler img {
@@ -294,7 +297,9 @@ height: 15px!important;
 margin-top: 0px!important;
 position: absolute;
 transform-origin: center;
+-webkit-transform-origin: center;
 transform: rotate(45deg)!important;
+-webkit-transform: rotate(45deg)!important;
 }
 
 span.listItem {
@@ -339,7 +344,9 @@ margin-right: 20px;
     width: 20px;
     height: 20px;
     transform-origin: center;
+    -webkit-transform-origin: center;
     transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
     position: absolute;
     right: 22px;
     top: 15px;
@@ -410,25 +417,111 @@ left: 32%;
          }
             
             
+            
+            
             .server {
+position: absolute;
+top: 69px;
+left: 0px;
+width: 100px;
+height: 27px;
+text-align: center;
+overflow: hidden;
+                opacity: .4;
+    transition: top .7s, height .7s, opacity .7s;
+                
+}
+            
+            .time.back {
+position: absolute;
+bottom: -70px;
+left: 0px;
+padding: 4px;
+border-radius: 9px;
+                  transition: bottom .7s;
+}
+            
+            .ip {
+position: absolute;
+bottom: 0px;
+padding-top: 5px;
+width: 100%;
+padding-bottom: 5px;
+border-radius: 9px;
+                  transition: bottom .7s;
+}
+            
+            
+            .place {
+position: absolute;
+bottom: -40px;
+border-radius: 10px;
+padding: 1px;
+font-size: 10px;
+
+              transition: bottom .7s;
+            }
+            
+            
+            
+          .right {
+           right: 0px;   
+              left: initial!important;
+          }
+            
+            
+             .server:hover {
 position: absolute;
 top: 0px;
 left: 0px;
 width: 100px;
-height: 200px;
-background-color: black;
+height: 100px;
+                 opacity: 1;
+ z-index: 25;   
                 text-align: center;
 }
             
-            .server:hover {
-                
-             z-index: 25;   
-            }
 
             .hideIt {
                 
              display: none;   
             }
+            
+            
+           .server:hover .time.back {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    padding: 4px;
+    border-radius: 9px;
+}
+
+.server:hover .place {
+    position: absolute;
+    bottom: 30px;
+    border-radius: 10px;
+    padding: 1px;
+    font-size: 10px;
+}
+
+.server:hover .ip {
+    position: absolute;
+    bottom: 70px;
+    padding-top: 5px;
+    width: 100%;
+    padding-bottom: 5px;
+    border-radius: 9px;
+}  
+            
+            
+            img.pointer {
+float: right;
+height: 10px;
+margin-top: 2px;
+margin-left: 5px;
+margin-right: 5px;
+transform-origin: center center;
+}
             
 		</style>
 		<!--[if lt IE 9]>
@@ -537,6 +630,7 @@ function getProcessingSketchId () { return 'gridTest2'; }
                 
                 
             $("#processingSketch").css("transform","scale(" + whichScale + "," + whichScale + ") translateX(-" + (((2048*whichScale) - window.innerWidth)/2) + "px)");
+            $("#processingSketch").css("-webkit-transform","scale(" + whichScale + "," + whichScale + ") translateX(-" + (((2048*whichScale) - window.innerWidth)/2) + "px)");
                 
                 drag = new setUpDragging(((2048 - window.innerWidth)/2), whichScale);
                 search = new searchMenu();
@@ -597,6 +691,8 @@ function getProcessingSketchId () { return 'gridTest2'; }
                 
                 
                 this.animation = function() {
+                    this.letsDoSomePositioning();
+                    
                     var oldSize = this.sites.size();
                   //  this.sites = pro.getSites().sites;
                     //console.log(this.sites);
@@ -605,23 +701,81 @@ function getProcessingSketchId () { return 'gridTest2'; }
                     
                    var sketch = [];
                     sketch.x = $("#processingSketch").offset().left - 50;
-                    sketch.y = $("#processingSketch").offset().top - 200;
+                    sketch.y = $("#processingSketch").offset().top - 105;
                     sketch.h = $("#processingSketch").height() * drag.scale;
                     sketch.w = $("#processingSketch").width() * drag.scale;
                         for (var i = 0; i<this.sites.size(); i++) {
                            // console.log(this.sites.get(i));
-                                  for (var p = 0; p<this.sites.get(i).dataPoints.size(); p++) {
+                             var timeAdd = 0;    
+                            var lastActive;
+                            for (var p = 0; p<this.sites.get(i).dataPoints.size(); p++) {
                                       var serv = this.sites.get(i).dataPoints.get(p);
+                                     
                                       if (this.sites.get(i).dataPoints.get(p).ele==undefined || this.sites.get(i).dataPoints.get(p).ele==null ) {
                                       this.sites.get(i).dataPoints.get(p).ele = document.createElement("div");
                                           var ele = this.sites.get(i).dataPoints.get(p).ele;
                                        ele.className = "server";
-                                          if (this.sites.get(i).dataPoints.get(p).lat == "0") {
-                                           ele.className += " hideIt";   
+                                          ele.setAttribute("color", search.routes[i].color);
+                                          ele.setAttribute("name", this.sites.get(i).name);
+                                          
+                                         
+                                            console.log(this.sites.get(i).dataPoints.get(p).time);
+                                              if (this.sites.get(i).dataPoints.get(p).lat == "0") {
+                                           ele.className += " hideIt";
+                                                  console.log("timeAdd:  " + timeAdd);
+                                               timeAdd+=parseFloat(this.sites.get(i).dataPoints.get(p).time);
+                                          } else {
+                                           
+                                              var colour = ele.getAttribute("color");
+                                              var left = false;
+                                              if (lastActive!=null || lastActive!=undefined) {
+                                                  if (lastActive.realPos.x<=this.sites.get(i).dataPoints.get(p).realPos.x) {
+                                                   left=true;   
+                                                  }
+                                                  
+                                              }
+                                              
+                                              var backTime = document.createElement("div");
+                                              backTime.className = "time back";
+                                              if (left) {
+                                               backTime.className+=" left";   
+                                              } else {
+                                               backTime.className+=" right";   
+                                              }
+                                              
+                                              backTime.innerHTML = parseFloat(this.sites.get(i).dataPoints.get(p).time + timeAdd).toFixed(2) + "ms";
+                                              backTime.style.backgroundColor = colour;
+                                              
+                                              var pointer = document.createElement('img');
+                                              pointer.className="pointer";
+                                              pointer.src="/pointer.svg";
+                                              backTime.appendChild(pointer);
+                                              ele.appendChild(backTime);
+                                              
+                                              var ipAdd = document.createElement('div');
+                                              ipAdd.className = "ip";
+                                              ipAdd.innerHTML = this.sites.get(i).dataPoints.get(p).ip;
+                                               ipAdd.style.backgroundColor = colour;
+                                              ele.appendChild(ipAdd);
+                                              
+                                              var cou = document.createElement('div');
+                                              cou.className = "place";
+                                              cou.innerHTML = this.sites.get(i).dataPoints.get(p).city + ", " + this.sites.get(i).dataPoints.get(p).state;
+                                               cou.style.backgroundColor = colour;
+                                              ele.appendChild(cou);
+                                              
+                                              console.log("both:  " + this.sites.get(i).dataPoints.get(p).time + timeAdd);
+                                              timeAdd = 0;
+                                              
+                                              
+                                              lastActive = this.sites.get(i).dataPoints.get(p);
+                                              
                                           }
                                           
-                                          ele.innerHTML = this.sites.get(i).dataPoints.get(p).ip
                                           document.body.appendChild(ele);
+                                          
+                                       
+                                          
                                           
                                       } else {
                                           
@@ -630,6 +784,7 @@ function getProcessingSketchId () { return 'gridTest2'; }
                                           
                                           if (serv.realPos.x!=0 && serv.realPos.y!=0) {
                                             serv.ele.style.transform = "translate3d(" + xx + "px, " + yy + "px,0)";   
+                                            serv.ele.style.webkitTransform = "translate3d(" + xx + "px, " + yy + "px,0)";   
                                               
                                               
                                           }
@@ -637,8 +792,37 @@ function getProcessingSketchId () { return 'gridTest2'; }
                                       
                                   }
                             
-                            }        
-                        
+                            } //end first if this.sitesLoop
+                    
+                    
+                    
+                         
+                    
+                         for (var i = 0; i<this.sites.size(); i++) {
+                           // console.log(this.sites.get(i));
+                             var timeAdd = 0;    
+                            var lastActive=0;
+                             var site = this.sites.get(i);
+                            for (var p = 0; p<site.dataPoints.size(); p++) {
+                                var dP = site.dataPoints.get(p);
+                                if (dP.ele.className!="server hideIt") {
+                                    
+                                    if (lastActive!=0) {
+                                        var xx = dP.realPos.x - lastActive.realPos.x;
+                                        var yy = dP.realPos.y - lastActive.realPos.y;
+                                       
+                                        
+                                        var rot = pro.degrees( pro.atan2(-1 * yy,-1 * xx)  ) + 360;
+                                       
+                                        dP.ele.getElementsByClassName("pointer")[0].style.transform = "rotate(" + rot + "deg)";
+                                        dP.ele.getElementsByClassName("pointer")[0].style.webkitTransform = "rotate(" + rot + "deg)";
+                                        
+                                    }
+                                    
+                                    lastActive = dP;
+                                }
+                            }
+                         }
                  
                     
                     
@@ -649,8 +833,48 @@ function getProcessingSketchId () { return 'gridTest2'; }
                 
                 
                 
+                   this.letsDoSomePositioning = function() {
+               
+                     for (var i = 0; i<this.sites.size(); i++) {
+                           // console.log(this.sites.get(i));
+                              
+                            var lastActive;
+                            for (var p = 0; p<this.sites.get(i).dataPoints.size(); p++) {
+                                      var serv = this.sites.get(i).dataPoints.get(p);
+                                     console.log("shit");
+                                      if ((serv.merged==undefined || serv.merged==null) && (serv.ele!=null || serv.ele!=undefined)) {
+                                          console.log("we got some");
+                                          console.log(this.sites.get(i).dataPoints.get(p).realPos);
+                                    for (var d = p+1; d<this.sites.get(i).dataPoints.size(); d++) {                                         if (this.sites.get(i).dataPoints.get(p).realPos.x==this.sites.get(i).dataPoints.get(d).realPos.x && this.sites.get(i).dataPoints.get(d).ele.className!="server hideIt" ) {
+                                        console.log("oh yeaaahh");
+                                        this.sites.get(i).dataPoints.get(d).merged = true;
+                                        var newEle = this.sites.get(i).dataPoints.get(d).ele.childNodes[0];
+                                                
+                                        console.log(this.sites.get(i).dataPoints.get(d).ele);
+                                      //this.sites.get(i).dataPoints.get(p).ele.appendChild(newEle);
+                                        
+                    this.sites.get(i).dataPoints.get(d).ele.parentNode.removeChild(this.sites.get(i).dataPoints.get(d).ele);
+                                        
+                                          //add .childNodes[0] to the p element and remove d element
+                                    }
+                                    }
+                                this.sites.get(i).dataPoints.get(p).merged = true;
+                                          
+                             }// end checking if we have already merged the servers
+                            }// end sites loop
+                                
+                            }//end second if this.sitesLoop 
+                
                 
             }
+                
+                
+                
+            }
+            
+            
+            
+         
             
             
             function getSketch() {
@@ -809,6 +1033,7 @@ function getProcessingSketchId () { return 'gridTest2'; }
                     
                     
                       $("#processingSketch").css("transform","scale(" + this.scale + "," + this.scale + ") translate(" + this.xOff + "px, " + this.yOff + "px)");
+                      $("#processingSketch").css("-webkit-transform","scale(" + this.scale + "," + this.scale + ") translate(" + this.xOff + "px, " + this.yOff + "px)");
                     
                 }
                 
@@ -953,13 +1178,13 @@ function getProcessingSketchId () { return 'gridTest2'; }
                       console.log(stop); pro.addSomeData(stop.lat,stop.lon,stop.time,stop.country,stop.city,stop.state,stop.zip,stop.ip, whichSite); 
                         
                     }
-                    
+                    this.colorCycle();
                     
                      this.routes[num] = [];
                      this.routes[num].route = routeArray;
                      this.routes[num].color = this.colors[this.colorCount];
                       this.routes[num].open = true
-                     this.colorCycle();
+                     
                     
                     addLi(input, num);
                      
@@ -971,16 +1196,35 @@ function getProcessingSketchId () { return 'gridTest2'; }
                  
                     var listItems = document.getElementById("list").childNodes[1].getElementsByTagName("li");
                     
+                    var name;
+                    
                     for (var i = 0; i<listItems.length; i++) {
                         
                      if (listItems[i].childNodes[0].getAttribute("num")==num) {
-                          pro.removeSite(listItems[i].childNodes[2].innerHTML);
+                         name = listItems[i].childNodes[2].innerHTML; 
+                         
+                         
+                        
+                         $(".server").each(function() {
+                            if ($(this).attr("name")==name) {
+                                $(this).remove();
+                            }
+                             
+                         });
+                         
+                         
+                         pro.removeSite(listItems[i].childNodes[2].innerHTML);
                          listItems[i].parentNode.removeChild(listItems[i]); 
                          
                          
                      }
                         
                     }
+                    
+                    
+                    
+                     
+                    
                     
                     search.routes[num] = "dead";
                     
@@ -1111,7 +1355,7 @@ function getProcessingSketchId () { return 'gridTest2'; }
                                     
                                      $.ajax({
                             type: "POST",
-                            url: "/toGeolocation",
+                            url: "http://idtraceroute.herokuapp.com/toGeolocation",
                             contentType: "application/json;charset=UTF-8",
                             data: JSON.stringify(routeArray),
                             async: true,
